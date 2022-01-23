@@ -351,6 +351,7 @@ mkdir -p ~/.dev ~/data ~/dl ~/docs ~/drive ~/pics ~/vids ~/.dotfiles
 mv arch_install_part3.sh ~/.dev/
 git clone https://github.com/EscherMoore/Dotfiles.git ~/.dotfiles/.
 sleep 5
+rm -rf ~/.bashrc
 cd ~/.dotfiles/
 stow -vSt ~ *
 sleep 5
