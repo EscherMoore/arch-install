@@ -275,7 +275,7 @@ sleep 5
 pacman -S --noconfirm archlinux-keyring accountsservice
 pacman -S --noconfirm xorg-server xorg-xinit \
 i3-gaps i3blocks rofi nitrogen lightdm lightdm-slick-greeter lxappearance dunst picom noto-fonts noto-fonts-emoji xdotool \
-zsh zsh-completions git alacritty bpytop firefox neovim neofetch lolcat powerline powerline-fonts stow pacutils mupdf imwheel sudo
+zsh zsh-completions git alacritty bpytop firefox neovim tree neofetch lolcat powerline powerline-fonts stow pacutils mupdf imwheel sudo
 
 printf "\n"
 echo "Enabling NetworkManager..."
