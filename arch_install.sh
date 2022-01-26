@@ -273,9 +273,10 @@ echo "Installing Your System Packages..."
 sleep 5
 # Needs to be seperate to reinstall archlinux-keyring... this fixes lightdm-slick-greeter bug
 pacman -S --noconfirm archlinux-keyring accountsservice
-pacman -S --noconfirm xorg-server xorg-xinit \
-i3-gaps i3blocks rofi nitrogen lightdm lightdm-slick-greeter lxappearance dunst picom noto-fonts noto-fonts-emoji xdotool \
-zsh zsh-completions git alacritty bpytop firefox neovim tree neofetch lolcat powerline powerline-fonts stow pacutils mupdf imwheel sudo
+pacman -S --noconfirm xorg-server xorg-xinit i3-gaps i3blocks rofi nitrogen lightdm lightdm-slick-greeter lxappearance dunst \
+picom noto-fonts noto-fonts-emoji xdotool pacutils mupdf imwheel sudo bluez bluez-utils zsh zsh-completions git alacritty \
+bpytop firefox neovim tree bluez bluez-utils neofetch lolcat powerline powerline-fonts stow 
+
 
 printf "\n"
 echo "Enabling NetworkManager..."
@@ -347,13 +348,19 @@ printf '\033c'
 cd $HOME
 
 # POST install (TODO import dot files)
-mkdir -p ~/.dev ~/data ~/dl ~/docs ~/drive ~/pics ~/vids ~/.dotfiles
+mkdir -p ~/.dev ~/data ~/dl ~/docs ~/drive ~/pics ~/vids ~/.dotfiles ~/.builds/yay/
 mv arch_install_part3.sh ~/.dev/
-git clone https://github.com/EscherMoore/Dotfiles.git ~/.dotfiles/.
+echo "Cloning your dot files..."
+sleep 2
+git clone https://github.com/EscherMoore/Dotfiles.git ~/.dotfiles/. && sleep 2
 sleep 5
 rm -rf ~/.bashrc
-cd ~/.dotfiles/
-stow -vSt ~ *
+cd ~/.dotfiles/ && stow -vSt ~ *
+sleep 5
+pacman -S --noconfirm --needed base-devel
+echo "Cloning your AUR helper(yay)..."
+sleep 2
+git clone https://aur.archlinux.org/yay.git ~/.builds/yay
 sleep 5
 echo "Installation Complete! Exiting..."
 sleep 2
