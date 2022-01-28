@@ -302,7 +302,10 @@ efi_mount_prompt() {
                         sleep 2
 			pacman --noconfirm -S grub networkmanager
 			sleep 2
-			read -p "Enter the drive (NOT the partition) where GRUB is to be installed" drive
+			printf "\n"
+			fdisk -l
+			printf "\n"
+			read -p "Enter the drive (NOT the partition) where GRUB is to be installed: " drive
 			grub-install --target=i386-pc $drive
                         return 0
                         ;;
