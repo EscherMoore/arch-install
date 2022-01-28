@@ -411,7 +411,7 @@ sleep 2
 git clone https://github.com/EscherMoore/Dotfiles.git ~/.dotfiles/. && sleep 2
 sleep 5
 rm -rf ~/.bashrc
-cd ~/.dotfiles/ && stow -vSt ~ *
+cd ~/.dotfiles/ && stow -vSt ~ */
 sleep 5
 pacman -S --noconfirm --needed base-devel
 echo "Cloning your AUR helper(yay)..."
