@@ -62,7 +62,37 @@ swap_partition_prompt() {
                         return 0
                         ;;
                 *)
-                        echo "You entered $response. Expected (Y/n)"
+                        echo "You entered $awnser. Expected (Y/n)"
+			sleep 5
+                        return 1
+                        ;;
+esac
+}
+
+
+efi_partition_prompt() {
+	fdisk -l
+	printf "\n"
+	read -p "Did you create a EFI partition in fdisk? (Y/n): " awnser
+        case "$awnser" in
+                Y|y)
+			fdisk -l
+			printf "\n"
+			read -p "Enter the efi partition that you created in fdisk: " efipartition
+			echo "Formatting EFI system partition to FAT32 using mkfs.fat()..."
+			sleep 2
+			mkfs.fat -F 32 $efi_partition
+			# https://wiki.archlinux.org/title/installation_guide#Format_the_partitions
+			sleep 2
+			return 0
+                        ;;
+                N|n)
+                        echo "OK. Moving on without efi partition..."
+                        sleep 2
+                        return 0
+                        ;;
+                *)
+                        echo "You entered $awnser. Expected (Y/n)"
 			sleep 5
                         return 1
                         ;;
@@ -89,14 +119,7 @@ echo "Exiting fdisk..."
 sleep 4
 
 # EFI PARTITION
-fdisk -l
-printf "\n"
-read -p "Enter the EFI partition that you created in fdisk: " efi_partition
-echo "Formatting EFI system partition to FAT32 using mkfs.fat()..."
-sleep 2
-mkfs.fat -F 32 $efi_partition
-sleep 2
-# https://wiki.archlinux.org/title/installation_guide#Format_the_partitions
+until efi_partition_prompt ; do : ; done
 
 # SWAP PARTITION
 until swap_partition_prompt ; do : ; done
@@ -237,30 +260,63 @@ echo "---Set the root password---"
 passwd
 #https://wiki.archlinux.org/title/installation_guide#Root_password
 
-echo "Downloading grub, efibootmgr & networkmanager..."
-sleep 2
-pacman --noconfirm -S grub efibootmgr networkmanager
-sleep 4
 
 # Need with encryption (add later)
 #verbose_and_interactive "Recreate initramfs image" "mkinitcpio -P" \ 
 #"https://wiki.archlinux.org/title/installation_guide#Initramfs"
 
-echo "Making directory /boot/efi..."
-sleep 2
-mkdir /boot/efi
-fdisk -l
-printf "\n"
-read -p "Enter the EFI partition that you created earlier: " efi_partition
-echo "Mounting EFI partition to /boot/efi..."
-sleep 2
-mount $efi_partition /boot/efi 
-sleep 2
-# https://wiki.archlinux.org/title/GRUB#UEFI_systems
 
-verbose_and_interactive "Install grub EFI application" "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB"
-# https://wiki.archlinux.org/title/GRUB#UEFI_systems
-sleep 5
+efi_mount_prompt() {
+	fdisk -l
+	printf "\n"
+	read -p "Did you create an EFI partition earlier in fdisk? (Y/n): " awnser
+        case "$awnser" in
+                Y|y)
+
+			echo "Downloading grub, efibootmgr & networkmanager..."
+			sleep 2
+			pacman --noconfirm -S grub efibootmgr networkmanager
+			sleep 2
+			echo "Making directory /boot/efi..."
+			sleep 2
+			mkdir /boot/efi
+			fdisk -l
+			printf "\n"
+			read -p "Enter the EFI partition that you created earlier: " efi_partition
+			echo "Mounting EFI partition to /boot/efi..."
+			sleep 2
+			mount $efi_partition /boot/efi 
+			# https://wiki.archlinux.org/title/GRUB#UEFI_systems
+			sleep 2
+			echo "Installing grub EFI application..."
+			sleep 2
+			grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
+			# https://wiki.archlinux.org/title/GRUB#UEFI_systems
+			sleep 2
+			return 0	
+                        ;;
+                N|n)
+                        echo "OK. Downloading grub & networkmanager..."
+                        sleep 2
+			pacman --noconfirm -S grub networkmanager
+			sleep 2
+			printf "\n"
+			fdisk -l
+			printf "\n"
+			read -p "Enter the drive (NOT the partition) where GRUB is to be installed: " drive
+			grub-install --target=i386-pc $drive
+                        return 0
+                        ;;
+                *)
+                        echo "You entered $awnser. Expected (Y/n)"
+			sleep 5
+                        return 1
+                        ;;
+esac
+}
+
+# EFI mount
+until efi_mount_prompt ; do : ; done
 
 verbose_and_interactive "Generate grub.cfg" "grub-mkconfig -o /boot/grub/grub.cfg" 
 # https://wiki.archlinux.org/title/GRUB#Generated_grub.cfg
@@ -352,7 +408,7 @@ sleep 2
 git clone https://github.com/EscherMoore/Dotfiles.git ~/.dotfiles/. && sleep 2
 sleep 5
 rm -rf ~/.bashrc
-cd ~/.dotfiles/ && stow -vSt ~ *
+cd ~/.dotfiles/ && stow -vSt ~ */
 sleep 5
 pacman -S --noconfirm --needed base-devel
 echo "Cloning your AUR helper(yay)..."

@@ -4,7 +4,6 @@ Inspired by Bugswriter's [Arch Linux Magic](https://github.com/bugswriter/arch-l
 
 ## Things this script assumes about your system
  
-1. You are using a UEFI system
 1. You do NOT want encryption
 1. You want to install my [Dotfiles](https://github.com/EscherMoore/Dotfiles)
 
