@@ -1,7 +1,6 @@
 #part1
 printf '\033c'
 
-echo "Inside part 1..."
 sleep 5
 
 # Takes 3 arguements
@@ -170,7 +169,6 @@ esac
 
 printf '\033c'
 
-echo "Inside part 2..."
 sleep 5
 
 pacman -S --noconfirm sed
@@ -342,7 +340,6 @@ esac
 
 printf '\033c'
 
-#echo "Inside part 3..."
 #sleep 5
 
 cd $HOME
